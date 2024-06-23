@@ -1,6 +1,7 @@
 'use server';
 
 import { DATA_PER_PAGE } from '@/Constants';
+import { ApiFormOptions, Platform } from '@/types';
 import { Session } from '@/types/api.types';
 import { instance } from '../lib/axios';
 import { publishMessage } from './Aws';
@@ -61,22 +62,44 @@ export async function getASession(id: number | null): Promise<Session | {}> {
  */
 export async function createSession(formData: Session) {
   try {
-    const payload: Session = {
-      ...formData,
-      session_id: '',
-      meta_data: {
-        ...formData.meta_data,
-        report_link: '',
-        shortened_link: '',
-        has_synced_to_bq: false,
-        infinite_session: false,
-        date_created: new Date(),
-      },
-      purpose: {
-        type: 'attendance',
-        params: 'quiz',
-      },
-    };
+    const platform = formData?.platform;
+
+    let payload: Session = {};
+
+    // Handle Payload according to Platform
+    if (platform === Platform.Quiz) {
+      payload = {
+        ...formData,
+        session_id: '',
+        meta_data: {
+          ...formData.meta_data,
+          report_link: '',
+          shortened_link: '',
+          has_synced_to_bq: false,
+          infinite_session: false,
+          date_created: new Date(),
+        },
+        purpose: {
+          type: 'attendance',
+          params: 'quiz',
+        },
+      };
+    } else {
+      payload = {
+        ...formData,
+        session_id: '',
+        meta_data: {
+          ...formData.meta_data,
+          report_link: '',
+          shortened_link: '',
+          has_synced_to_bq: false,
+          infinite_session: false,
+          date_created: new Date(),
+        },
+        purpose: '',
+      };
+    }
+    console.info('Payload generated : ', platform, payload);
     const { data } = await instance.post<Session>(`/session`, payload);
     publishMessage({ action: 'db_id', id: data?.id });
     console.info(`[API SUCCESS] created session ${data?.id} : ${data}`);
@@ -103,5 +126,90 @@ export async function patchSession(formData: Session, id: number) {
   } catch (error) {
     console.error('Error posting form data', error);
     return { isSuccess: false };
+  }
+}
+
+/**
+ * Fetch required data from the server
+ * - group: List of groups
+ * - batch: List of batches
+ * - formSchema: List of form schema (popup form and signup form)
+ */
+export async function getAllOptions(): Promise<ApiFormOptions> {
+  try {
+    const groupOptions = await getAuthGroups();
+    const batchOptions = await getBatches();
+    const formSchemaOptions = await getFormSchemas();
+
+    const popupForm = formSchemaOptions?.filter((item) => item.label.includes('Profile'));
+    const signupForm = formSchemaOptions?.filter((item) => item.label.includes('Registration'));
+    console.info(`[API SUCCESS] fetching options`);
+
+    return {
+      group: groupOptions ?? [],
+      batch: batchOptions ?? [],
+      popupForm: popupForm ?? [],
+      signupForm: signupForm ?? [],
+    };
+  } catch (error) {
+    console.error(`[API ERROR] fetching options : ${error}`);
+    return {
+      group: [],
+      batch: [],
+      popupForm: [],
+      signupForm: [],
+    };
+  }
+}
+
+export async function getAuthGroups() {
+  try {
+    const { data } = await instance.get<Record<string, string>[]>(`/auth-group`);
+
+    const authGroups = data?.map((item) => ({
+      label: item.name,
+      value: item.name,
+      id: item.id,
+    }));
+
+    return authGroups ?? [];
+  } catch (error) {
+    console.error(`[API ERROR] fetching options : ${error}`);
+    return [];
+  }
+}
+
+export async function getBatches() {
+  try {
+    const { data } = await instance.get<Record<string, string>[]>(`/batch`);
+
+    const batches = data?.map((item) => ({
+      label: item.name,
+      value: item.batch_id,
+      id: item.id,
+      parentId: item.parent_id,
+      groupId: item.auth_group_id,
+    }));
+
+    return batches ?? [];
+  } catch (error) {
+    console.error(`[API ERROR] fetching options : ${error}`);
+    return [];
+  }
+}
+
+export async function getFormSchemas() {
+  try {
+    const { data } = await instance.get<Record<string, string>[]>(`/form-schema`);
+
+    const formSchemas = data?.map((item) => ({
+      label: item.name,
+      value: item.id,
+    }));
+
+    return formSchemas ?? [];
+  } catch (error) {
+    console.error(`[API ERROR] fetching options : ${error}`);
+    return [];
   }
 }
