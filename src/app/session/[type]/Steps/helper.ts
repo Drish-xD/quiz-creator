@@ -157,7 +157,8 @@ export const setBatchOptions = (
 export const setPlatformId = (
   value: string,
   formData: Session,
-  updateFormData: (data: Session | ((prevState: Session) => Session)) => void
+  updateFormData: (data: Session | ((prevState: Session) => Session)) => void,
+  form?: UseFormReturn
 ) => {
   let platformId = '';
 
@@ -173,26 +174,5 @@ export const setPlatformId = (
     platformId = '';
   }
 
-  // const platform = formData?.platform ?? '';
-  // switch (platform) {
-  //   case Platform.Meet:
-  //     platformId = value.split('meet.google.com/').pop() ?? '';
-  //     break;
-  //   case Platform.Youtube:
-  //     platformId = value.split('/watch?v=').pop() ?? '';
-  //     break;
-  //   case Platform.Plio:
-  //     platformId = value.split('play/').pop() ?? '';
-  //     break;
-  //   default:
-  //     platformId = '';
-  //     break;
-  // }
-  updateFormData((prev) => {
-    return {
-      ...prev,
-      platform_link: value,
-      platform_id: platformId,
-    };
-  });
+  form?.setValue('platformId', platformId);
 };
