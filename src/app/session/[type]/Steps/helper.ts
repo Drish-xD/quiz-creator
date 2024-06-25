@@ -167,7 +167,7 @@ export const setPlatformId = (
     platformId = value.split('/watch?v=').pop() ?? '';
   } else if (value?.includes('plio')) {
     platformId = value.split('play/').pop() ?? '';
-  } else if (value.includes('zoom')) {
+  } else if (value?.includes('zoom')) {
     platformId = value.split('j/').pop() ?? '';
   } else {
     platformId = '';
