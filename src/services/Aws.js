@@ -16,9 +16,9 @@ function publishMessage(message) {
 
   sns.publish(params, (error, data) => {
     if (error) {
-      console.error('[SNS ERROR] publishing message : ', error);
+      console.error('[SNS ERROR] publishing message : ', Message, error);
     } else {
-      console.info('[SNS SUCCESS] publishing message : ', data.MessageId);
+      console.info('[SNS SUCCESS] publishing message : ', Message, data.MessageId);
     }
   });
 }

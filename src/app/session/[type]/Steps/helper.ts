@@ -153,3 +153,46 @@ export const setBatchOptions = (
   form?.setValue('subBatch', '');
   (fieldsSchema.subBatch as MySelectProps).options = filteredClassBatchOptions ?? [];
 };
+
+export const setPlatformId = (
+  value: string,
+  formData: Session,
+  updateFormData: (data: Session | ((prevState: Session) => Session)) => void
+) => {
+  let platformId = '';
+
+  if (value?.includes('meet.google.com')) {
+    platformId = value.split('meet.google.com/').pop() ?? '';
+  } else if (value?.includes('youtube.com')) {
+    platformId = value.split('/watch?v=').pop() ?? '';
+  } else if (value?.includes('plio')) {
+    platformId = value.split('play/').pop() ?? '';
+  } else if (value.includes('zoom')) {
+    platformId = value.split('j/').pop() ?? '';
+  } else {
+    platformId = '';
+  }
+
+  // const platform = formData?.platform ?? '';
+  // switch (platform) {
+  //   case Platform.Meet:
+  //     platformId = value.split('meet.google.com/').pop() ?? '';
+  //     break;
+  //   case Platform.Youtube:
+  //     platformId = value.split('/watch?v=').pop() ?? '';
+  //     break;
+  //   case Platform.Plio:
+  //     platformId = value.split('play/').pop() ?? '';
+  //     break;
+  //   default:
+  //     platformId = '';
+  //     break;
+  // }
+  updateFormData((prev) => {
+    return {
+      ...prev,
+      platform_link: value,
+      platform_id: platformId,
+    };
+  });
+};

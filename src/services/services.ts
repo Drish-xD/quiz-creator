@@ -15,20 +15,29 @@ import { publishMessage } from './Aws';
  * - data : array of Session
  * - hasMore : boolean indicating if there are more items
  */
-export async function getTableData(currentPage: number, limit: number) {
+export async function getTableData(currentPage: number, limit: number, filterParams: Object) {
   try {
     const offset = currentPage * DATA_PER_PAGE;
+
+    const filteredParams = Object.entries(filterParams)
+      .filter(([key, value]) => value !== undefined && value !== '')
+      .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+
     const { data } = await instance.get<Session[]>(`/session`, {
       params: {
         offset,
         limit,
         sort_order: 'desc',
-        // platform: '',
+        ...filteredParams,
       },
     });
     const hasMore = data.length > DATA_PER_PAGE;
     const items = hasMore ? data.slice(0, -1) : data;
-    console.info('[API SUCCESS] fetching sessions : ', { length: items.length, currentPage });
+    console.info('[API SUCCESS] fetching sessions : ', {
+      length: items.length,
+      currentPage,
+      filteredParams,
+    });
     return { data: items, hasMore };
   } catch (error) {
     console.error(`[API ERROR]  fetching sessions : ${error}`);
@@ -90,10 +99,6 @@ export async function createSession(formData: Session) {
         session_id: '',
         meta_data: {
           ...formData.meta_data,
-          report_link: '',
-          shortened_link: '',
-          has_synced_to_bq: false,
-          infinite_session: false,
           date_created: new Date(),
         },
         purpose: '',
@@ -184,7 +189,7 @@ export async function getBatches() {
     const { data } = await instance.get<Record<string, string>[]>(`/batch`);
 
     const batches = data?.map((item) => ({
-      label: item.name,
+      label: item.batch_id,
       value: item.batch_id,
       id: item.id,
       parentId: item.parent_id,
