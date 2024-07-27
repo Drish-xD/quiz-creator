@@ -87,20 +87,24 @@ export const basicSchema = z
       }
     }
 
-    if (data.platform !== Platform.Quiz && !data.subBatch) {
-      context.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'This field is required',
-        path: ['subBatch'],
-      });
-    }
-
-    if (data.platform === Platform.Quiz && !data.parentBatch) {
-      context.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'This field is required',
-        path: ['parentBatch'],
-      });
+    if (data.platform === Platform.Quiz) {
+      // Quiz platform validation
+      if (!data.parentBatch) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'This field is required',
+          path: ['parentBatch'],
+        });
+      }
+    } else {
+      // Live platform validation
+      if (!data.subBatch?.length) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'This field is required',
+          path: ['subBatch'],
+        });
+      }
     }
   });
 
@@ -211,7 +215,7 @@ export const timelineSchema = z
 export const liveSchema = z
   .object({
     platformLink: z
-      .string()
+      .string({ required_error: 'This field is required' })
       .transform((value) => (value.trim() ? absoluteLink(value) : ''))
       .pipe(z.string().url('This is not a valid url')),
     platformId: z.string({ required_error: 'This field is required' }),
