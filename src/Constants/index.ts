@@ -55,3 +55,21 @@ export const KeysToDeleteBeforeUpdate: DeepKeys<Session>[] = [
   'platform_link',
   'platform_id',
 ];
+
+/**
+ * Map of platform link patterns to regex patterns to capture the unique ID from the URL
+ **/
+export const PlatformPatterns = [
+  // Meet Link
+  /meet\.google\.com\/([^/?]+)/,
+  // YouTube Video Link
+  /youtube\.com\/watch\?v=([^&]+)/,
+  // YouTube Live Link
+  /youtube\.com\/live\/([^/?]+)/,
+  // Any Plio Link
+  /play\/([^/?]+)/,
+  // Zoom Link
+  /zoom\.us\/j\/([^/?]+)/,
+  // Google Drive Link
+  /drive\.google\.com\/file\/d\/([^/?]+)/,
+];
