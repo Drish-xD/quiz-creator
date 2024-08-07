@@ -57,7 +57,7 @@ export const KeysToDeleteBeforeUpdate: DeepKeys<Session>[] = [
 ];
 
 /**
- * Map of platform link patterns to regex patterns to capture the unique ID from the URL
+ * Platform Link Patterns
  **/
 export const PlatformPatterns = [
   // Meet Link
