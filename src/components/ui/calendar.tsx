@@ -70,7 +70,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
             >
               <SelectTrigger
                 id={`${props.id}-${name}-selector`}
-                className='h-fit w-fit border-none p-0 focus:bg-none focus:ring-0 focus:ring-offset-0'
+                className="h-fit w-fit border-none p-0 focus:bg-none focus:ring-0 focus:ring-offset-0"
               >
                 <SelectValue />
               </SelectTrigger>

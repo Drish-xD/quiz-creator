@@ -162,10 +162,10 @@ const TimePeriodSelect = React.forwardRef<HTMLButtonElement, PeriodSelectorProps
     };
 
     return (
-      <div className='flex h-10 items-center'>
+      <div className="flex h-10 items-center">
         <Select
-          name='period'
-          value={period}
+          name="period"
+          defaultValue={period}
           onValueChange={(value: Period) => handleValueChange(value)}
         >
           <SelectTrigger

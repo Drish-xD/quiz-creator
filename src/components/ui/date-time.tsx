@@ -32,18 +32,18 @@ const DateTimePicker = forwardRef<
 
   return (
     <div
-      className='flex flex-col sm:flex-row gap-4 sm:gap-10 sm:items-center'
+      className="flex flex-col sm:flex-row gap-4 sm:gap-10 sm:items-center"
       id={restFieldProps.name}
     >
-      <div className='flex flex-col gap-4 flex-1'>
-        <FormLabel className='self-start'>{label?.date}</FormLabel>
+      <div className="flex flex-col gap-4 flex-1">
+        <FormLabel className="self-start">{label?.date}</FormLabel>
         <Popover>
           <FormControl>
             <PopoverTrigger asChild>
               <Button
                 {...restFieldProps}
                 id={`${restFieldProps.name}-button`}
-                variant='outline'
+                variant="outline"
                 className={cn('justify-start text-left font-normal')}
                 ref={refField}
                 disabled={disabled}
@@ -64,7 +64,7 @@ const DateTimePicker = forwardRef<
               {...restSchemaProps}
               {...restFieldProps}
               id={`${restFieldProps.name}-calendar`}
-              captionLayout='dropdown-buttons'
+              captionLayout="dropdown-buttons"
               fromYear={startOfToday().getFullYear()}
               toYear={addYears(startOfToday(), ALLOWED_YEARS).getFullYear()}
               mode='single'
