@@ -52,7 +52,7 @@ jobs:
         with:
           test-command: 'npm run test:jest'
 
-      - name: Cypress run
+      - name: Cypress run chrome
         uses: cypress-io/github-action@v6
         env:
           APP_ENV: ${{ secrets.TESTING_APP_ENV }}
@@ -63,3 +63,15 @@ jobs:
           start: npm run start
           wait-on: 'http://localhost:3000'
           browser: chrome
+
+      - name: Cypress run firefox
+        uses: cypress-io/github-action@v6
+        env:
+          APP_ENV: ${{ secrets.TESTING_APP_ENV }}
+          AF_DB_URL: ${{ secrets.STAGING_AF_DB_URL }}
+          AF_BEARER_TOKEN: ${{ secrets.STAGING_AF_BEARER_TOKEN }}
+        with:
+          build: npm run build
+          start: npm run start
+          wait-on: 'http://localhost:3000'
+          browser: firefox
