@@ -1,15 +1,15 @@
 const AWS = require('aws-sdk');
 
 AWS.config.update({
-  accessKeyId: process.env.AF_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AF_SECRET_ACCESS_KEY,
+  accessKeyId: process.env.AF_ACCESS_KEY_ID ?? '',
+  secretAccessKey: process.env.AF_SECRET_ACCESS_KEY ?? '',
   region: 'ap-south-1',
 });
 
 const sns = new AWS.SNS();
 
 function publishMessage(message) {
-  const TopicArn = process.env.AF_TOPIC_ARN;
+  const TopicArn = process.env.AF_TOPIC_ARN ?? '';
   const environment = process.env.APP_ENV ?? 'production';
   const Message = JSON.stringify({ environment, ...message });
   const params = { Message, TopicArn };

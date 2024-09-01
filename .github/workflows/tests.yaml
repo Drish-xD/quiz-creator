@@ -55,6 +55,10 @@ jobs:
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
+        env:
+          APP_ENV: testing
+          AF_DB_URL: http://localhost:3000
+          AF_BEARER_TOKEN: 'test'
         with:
           build: npm run build
           start: npm run start
