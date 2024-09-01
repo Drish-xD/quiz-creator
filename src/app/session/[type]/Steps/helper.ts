@@ -1,3 +1,4 @@
+import { PlatformPatterns } from '@/Constants';
 import {
   ApiFormOptions,
   AuthType,
@@ -24,7 +25,6 @@ export const setGroupPreset = (value: string, form: UseFormReturn, apiOptions: A
         isPopupForm: false,
         popupFormId: null,
         noOfFieldsInPopup: '',
-        isRedirection: true,
         isIdGeneration: false,
         parentBatch: '',
         subBatch: [],
@@ -42,7 +42,6 @@ export const setGroupPreset = (value: string, form: UseFormReturn, apiOptions: A
         isPopupForm: false,
         popupFormId: null,
         noOfFieldsInPopup: '',
-        isRedirection: true,
         isIdGeneration: true,
         parentBatch: '',
         subBatch: [],
@@ -61,7 +60,6 @@ export const setGroupPreset = (value: string, form: UseFormReturn, apiOptions: A
         isPopupForm: false,
         popupFormId: null,
         noOfFieldsInPopup: '',
-        isRedirection: true,
         isIdGeneration: false,
         parentBatch: '',
         subBatch: [],
@@ -77,7 +75,6 @@ export const setGroupPreset = (value: string, form: UseFormReturn, apiOptions: A
         isPopupForm: false,
         popupFormId: null,
         noOfFieldsInPopup: '',
-        isRedirection: true,
         isIdGeneration: false,
         parentBatch: '',
         subBatch: [],
@@ -91,7 +88,6 @@ export const setGroupPreset = (value: string, form: UseFormReturn, apiOptions: A
         isPopupForm: false,
         popupFormId: null,
         noOfFieldsInPopup: '',
-        isRedirection: true,
         isIdGeneration: false,
         parentBatch: '',
         subBatch: [],
@@ -183,23 +179,21 @@ export const setBatchOptions = (
 export const setPlatformId = (value: string, form: UseFormReturn) => {
   if (!value) return;
 
-  let seperator = null;
-  if (value?.includes('meet.google.com')) {
-    seperator = 'meet.google.com/';
-  } else if (value?.includes('youtube.com')) {
-    seperator = 'youtube.com/watch?v=';
-  } else if (value?.includes('plio.in')) {
-    seperator = 'play/';
-  } else if (value?.includes('zoom')) {
-    seperator = 'zoom.us/j/';
-  } else {
-    seperator = null;
+  let platformId = null;
+  for (const pattern of PlatformPatterns) {
+    const match = value.match(pattern);
+    if (match?.[1]) {
+      platformId = match[1];
+      break;
+    }
   }
 
-  if (seperator) {
-    const urlArr = value.split(seperator);
-    if (urlArr.length > 1) {
-      const platformId = urlArr[urlArr.length - 1];
+  if (platformId) {
+    form.setValue('platformId', platformId, { shouldDirty: true });
+  } else {
+    const platform = form.watch('platform');
+    if (platform === Platform.Others) {
+      const platformId = new Date().getTime().toString();
       form.setValue('platformId', platformId, { shouldDirty: true });
     }
   }
@@ -284,6 +278,11 @@ export const handleBatchFields = (
     fieldsSchema.parentBatch.hide = false;
   }
 
+  if (value === Platform.NoPlatform) {
+    form.setValue('isRedirection', false, { shouldDirty: true });
+  } else {
+    form.setValue('isRedirection', true, { shouldDirty: true });
+  }
   const selectedGroup = form.watch('group');
   if (selectedGroup) {
     setParentBatchOptions(selectedGroup, form, apiOptions, fieldsSchema);

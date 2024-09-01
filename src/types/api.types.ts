@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { STATUS } from './enums';
 
 const metaDataSchema = z.object({
   admin_testing_link: z.string().url().optional(),
@@ -24,6 +25,7 @@ const metaDataSchema = z.object({
   test_takers_count: z.number().int().optional(),
   test_type: z.string().optional(),
   subject: z.string().optional(),
+  status: z.nativeEnum(STATUS).optional(),
 });
 
 const purposeSchema = z.object({
@@ -37,7 +39,7 @@ const repeatScheduleSchema = z.object({
 });
 
 export const sessionSchema = z.object({
-  auth_type: z.string(),
+  auth_type: z.string().nullable(),
   created_by_id: z.string().datetime(),
   end_time: z.string().datetime(),
   id: z.number().int(),
