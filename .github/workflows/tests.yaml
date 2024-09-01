@@ -56,8 +56,11 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
+          env: APP_ENV=testing,AF_DB_URL=http://localhost:3000
           build: npm run build
           start: npm run start
           wait-on: 'http://localhost:3000'
           browser: chrome
-          env: APP_ENV=testing,AF_DB_URL=http://localhost:3000
+        env:
+          APP_ENV: testing
+          AF_DB_URL: http://localhost:3000
