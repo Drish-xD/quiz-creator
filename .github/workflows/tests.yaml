@@ -60,4 +60,4 @@ jobs:
           start: npm run start
           wait-on: 'http://localhost:3000'
           browser: chrome
-          env: APP_ENV=testing
+          env: APP_ENV=testing,AF_DB_URL=http://localhost:3000
