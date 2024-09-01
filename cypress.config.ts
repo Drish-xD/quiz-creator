@@ -5,5 +5,9 @@ export default defineConfig({
     baseUrl: 'http://localhost:3000',
     supportFile: 'cypress/support/index.ts',
     setupNodeEvents(on, config) {},
+    env: {
+      APP_ENV: 'testing',
+      AF_DB_URL: 'http://localhost:3000',
+    },
   },
 });
